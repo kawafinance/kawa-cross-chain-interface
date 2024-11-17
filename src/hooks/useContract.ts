@@ -10,7 +10,7 @@ import {getContract, isNative} from "../utils/contract";
 import COMPTROLLER_ABI from '../constants/abis/comptroller.json'
 import MARKET_ABI from '../constants/abis/market.json'
 import KWETHDELEGATE_ABI from '../constants/abis/kWethDelegate.json'
-import WETHROUTER_ABI from '../constants/abis/wethrouter.json'
+import WETHROUTER_ABI from '../constants/abis/wethRouter.json'
 import PYTH_ORACLE_ABI from '../constants/abis/pythOracle.json'
 import MULTICALL_ABI from '../constants/abis/multicall.json'
 import PRICE_PROVIDER_ABI from '../constants/abis/priceProvider.json'
