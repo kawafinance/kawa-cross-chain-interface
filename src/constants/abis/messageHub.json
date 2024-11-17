@@ -1,0 +1,290 @@
+[
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "kToken_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "gateway_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "gasReceiver_",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "clientContract_",
+        "type": "address"
+      },
+      {
+        "internalType": "string",
+        "name": "clientChain_",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "nonpayable",
+    "type": "constructor"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "previousOwner",
+        "type": "address"
+      },
+      {
+        "indexed": true,
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "OwnershipTransferred",
+    "type": "event"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gasReceiver_",
+        "type": "address"
+      }
+    ],
+    "name": "_setAxelarGasReceiver",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "gateway_",
+        "type": "address"
+      }
+    ],
+    "name": "_setAxelarGateway",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "string",
+        "name": "clientChain_",
+        "type": "string"
+      }
+    ],
+    "name": "_setClientChain",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "clientContract_",
+        "type": "address"
+      }
+    ],
+    "name": "_setClientContract",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "kToken_",
+        "type": "address"
+      }
+    ],
+    "name": "_setKToken",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "clientChain",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "clientContract",
+    "outputs": [
+      {
+        "internalType": "string",
+        "name": "",
+        "type": "string"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes32",
+        "name": "commandId",
+        "type": "bytes32"
+      },
+      {
+        "internalType": "string",
+        "name": "sourceChain",
+        "type": "string"
+      },
+      {
+        "internalType": "string",
+        "name": "sourceAddress",
+        "type": "string"
+      },
+      {
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
+      }
+    ],
+    "name": "execute",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "bytes",
+        "name": "payload",
+        "type": "bytes"
+      },
+      {
+        "internalType": "uint256",
+        "name": "gasLimit",
+        "type": "uint256"
+      }
+    ],
+    "name": "gasEstimate",
+    "outputs": [
+      {
+        "internalType": "uint256",
+        "name": "gas",
+        "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gasReceiver",
+    "outputs": [
+      {
+        "internalType": "contract IAxelarGasService",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "gateway",
+    "outputs": [
+      {
+        "internalType": "contract IAxelarGateway",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "kToken",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "owner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "renounceOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "sender",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "recipient",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "sendMessage",
+    "outputs": [],
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "newOwner",
+        "type": "address"
+      }
+    ],
+    "name": "transferOwnership",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  }
+]

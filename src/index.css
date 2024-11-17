@@ -1,0 +1,189 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+
+    font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
+    line-height: 1.5;
+    font-weight: 400;
+
+    color: rgba(255, 255, 255, 0.87);
+
+
+    --beam-primary-300-g: rgba(204, 255, 180, 0.75);
+    --sky-blue-g: rgba(114, 179, 255, 0.75);
+    overflow: auto;
+
+    /*font-synthesis: none;*/
+    /*text-rendering: optimizeLegibility;*/
+    /*-webkit-font-smoothing: antialiased;*/
+    /*-moz-osx-font-smoothing: grayscale;*/
+    /*-webkit-text-size-adjust: 100%;*/
+
+}
+
+body {
+    height: 100%;
+    width: 100%;
+    margin: 0;
+    padding: 0;
+    background-color: theme('colors.neutral-1000');
+    background-repeat: no-repeat;
+    background-size: 200%;
+    background-position: center 20%;
+    font-family: 'DM Sans', sans-serif;
+}
+
+*::-webkit-scrollbar {
+    width: 10px;;
+}
+
+*::-webkit-scrollbar-thumb {
+    border: 3px solid rgba(0, 0, 0, 0);
+    background-clip: padding-box;
+    border-radius: 9999px;
+    background-color: #bfbfbf8a;
+}
+
+@screen sm {
+    body {
+        background-position: center center;
+        background-size: contain;
+    }
+}
+
+.loading:after {
+    content: ' .';
+    animation: dots 1.2s steps(5, end) infinite;
+}
+
+@keyframes dots {
+    0%,
+    20% {
+        color: rgba(0, 0, 0, 0);
+        text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+    }
+    40% {
+        color: rgba(255, 255, 255, 0.8);
+        text-shadow: 0.25em 0 0 rgba(0, 0, 0, 0), 0.5em 0 0 rgba(0, 0, 0, 0);
+    }
+    60% {
+        text-shadow: 0.25em 0 0 rgba(255, 255, 255, 0.8), 0.5em 0 0 rgba(0, 0, 0, 0);
+    }
+    80%,
+    100% {
+        text-shadow: 0.25em 0 0 rgba(255, 255, 255, 0.8), 0.5em 0 0 rgba(255, 255, 255, 0.8);
+    }
+}
+
+/*.tippy-box[data-theme~='glass'] {*/
+/*  background-color: theme('colors.glass.200');*/
+/*  color: theme('colors.gray.100');*/
+/*}*/
+
+/*.tippy-box[data-theme~='glass'] > .tippy-arrow::before {*/
+/*  margin-top: 1px;*/
+/*}*/
+
+/*.tippy-box[data-theme~='glass'][data-placement^='top'] > .tippy-arrow::before {*/
+/*  bottom: -6px;*/
+/*  border-width: 6px 6px 0;*/
+/*  border-top-color: theme('colors.glass.200');*/
+/*}*/
+/*.tippy-box[data-theme~='glass'][data-placement^='bottom'] > .tippy-arrow::before {*/
+/*  border-bottom-color: theme('colors.glass.200');*/
+/*}*/
+/*.tippy-box[data-theme~='glass'][data-placement^='left'] > .tippy-arrow::before {*/
+/*  border-left-color: theme('colors.glass.200');*/
+/*}*/
+/*.tippy-box[data-theme~='glass'][data-placement^='right'] > .tippy-arrow::before {*/
+/*  border-right-color: theme('colors.glass.200');*/
+/*}*/
+
+.spinning-loading {
+    display: inline-block;
+    position: relative;
+}
+
+.spinning-loading div {
+    box-sizing: border-box;
+    display: block;
+    position: absolute;
+    border-radius: 50%;
+    animation: spinning-loading-anim 0.9s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+}
+
+.spinning-loading div:nth-child(1) {
+    animation-delay: -0.45s;
+}
+
+.spinning-loading div:nth-child(2) {
+    animation-delay: -0.3s;
+}
+
+.spinning-loading div:nth-child(3) {
+    animation-delay: -0.15s;
+}
+
+@keyframes spinning-loading-anim {
+    0% {
+        transform: rotate(0deg);
+    }
+    100% {
+        transform: rotate(360deg);
+    }
+}
+
+/*input:checked ~ .dot {*/
+/*  transform: translateX(100%);*/
+/*  background-color: theme('colors.pink.500');*/
+/*}*/
+
+.my-transition {
+    transition: height 300ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+
+/*[data-rk] > div > div > div > div > div > div > div > div > div[style=""] > button[data-testid="rk-account-button"] >div:nth-child(2) {*/
+/*  border-width: 0 ;*/
+/*  background:none;*/
+/*}*/
+
+[data-rk] button[data-testid="rk-account-button"] > div:nth-child(2) {
+    border-width: 0;
+    background: none;
+
+}
+
+[data-rk] button[data-testid="rk-account-button"] > div:nth-child(2) {
+    border-width: 0;
+    background: none;
+}
+
+/* button icon */
+/*[data-rk] button[data-testid="rk-account-button"] > div:nth-child(2) > div > div > div > div > div {*/
+/*    display: none;*/
+/*}*/
+
+body > div > [data-rk] > div > div[role="document"] > div {
+    padding: 1px;
+    background-image: linear-gradient(to right, #CCFFB4, #72B3FF);
+    border-radius: 1.5em;
+}
+
+body > div > [data-rk] > div > div[role="document"] > div > div {
+    background-color: #2A2C34;
+    border: 0;
+}
+
+/* modal icon */
+/*body > div > [data-rk] > div > div[role="document"] > div > div > div > div > div > div > div > div > div > div {*/
+/*    display: none;*/
+/*}*/
+
+
+
