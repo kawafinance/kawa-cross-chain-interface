@@ -8,13 +8,14 @@ import {useUserInfo} from "../../hooks/useLendFarms";
 import TransactionModal, {TRANSACTION_STATE} from "../TransactionModal";
 import CollateralModal from "../CollateralModal";
 import Tippy from "@tippyjs/react";
-import {useSwitchChain} from "wagmi";
+import {useChainId, useSwitchChain} from "wagmi";
 import {useAddRecentTransaction} from "@rainbow-me/rainbowkit";
 import {NATIVE_CHAIN_ID} from "../../constants/contracts.ts";
 
 const ListItemDetails = ({type, farm}) => {
     const navigate = useNavigate()
     const { switchChain } = useSwitchChain()
+    const chainId = useChainId()
     const addRecentTransaction = useAddRecentTransaction();
     const {
         enterMarkets,
@@ -42,7 +43,7 @@ const ListItemDetails = ({type, farm}) => {
     const borrowButtonDisable =
         farm?.borrowPaused ||
         (farm?.borrowCap > 0 && farm?.borrowCap < farm?.borrow) ||
-        userInfo?.accountLiquidity === 0
+        userInfo?.accountLiquidity.eq(0)
 
     const handleClick = (action) => {
         if (action === 'collateral') {
@@ -226,6 +227,7 @@ const ListItemDetails = ({type, farm}) => {
                 type={transactionAction}
                 transferSymbol={farm?.underlyingSymbol}
                 transferAmount={''}
+                txChainId={chainId}
             />
         </>
     )

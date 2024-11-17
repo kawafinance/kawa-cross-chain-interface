@@ -50,7 +50,7 @@ export function useUnitrollerContractConfig(): ContractConfig {
     return {
         abi: COMPTROLLER_ABI,
         address: UNITROLLER_ADDRESS
-    }
+    } as const
 }
 
 export function usePriceProviderContract(): Contract | null {
@@ -65,7 +65,7 @@ export function useMarketContractConfig(
     return {
         abi,
         address: tokenAddress ?? ''
-    }
+    } as const
 }
 
 export function useMessageHubContractConfig(
@@ -74,14 +74,14 @@ export function useMessageHubContractConfig(
     return {
         abi: MESSAGE_HUB_ABI,
         address: messageHubAddress ?? ''
-    }
+    } as const
 }
 
 export function useWEthRouterContractConfig(): ContractConfig {
     return {
         abi: WETHROUTER_ABI,
         address: WETH_ROUTER_ADDRESS
-    }
+    } as const
 }
 
 export function usePythOracleContract(): Contract | null {
@@ -93,7 +93,7 @@ export function usePythOracleContractConfig(): ContractConfig {
     return {
         abi: PYTH_ORACLE_ABI,
         address: PYTH_ORACLE_ADDRESS
-    }
+    } as const
 }
 
 export function useMulticallContract(): Contract | null {
@@ -105,10 +105,10 @@ export function useTokenContract(tokenAddress?: string, withSignerIfPossible?: b
     return useContract(tokenAddress, ERC20_ABI, withSignerIfPossible)
 }
 
-export function useTokenContractConfig(tokenAddress?: string): ContractConfig {
+export function useTokenContractConfig(address: string): ContractConfig {
     return {
         abi: ERC20_ABI,
-        address: tokenAddress
+        address
     }
 }
 

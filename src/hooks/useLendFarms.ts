@@ -10,7 +10,7 @@ import {useAccount, useReadContract, useReadContracts} from "wagmi";
 import {useLeaderboard} from "./useLeaderboard.ts";
 import {MULTIPLIERS} from "../constants/rewards.ts";
 
-const getKErc20DelegatorViewCall = (contractAddress, functionName, args = []) => {
+const getKErc20DelegatorViewCall = (contractAddress: string, functionName: string, args: unknown[] = []) => {
     return {
         abi: kErc20DelegatorABI,
         address: contractAddress,
@@ -25,7 +25,7 @@ export function useLendFarms() {
     const unitrollerContractConfig = useUnitrollerContractConfig()
     const pythOracleConfig = usePythOracleContractConfig()
 
-    const getUnitrollerCall = (functionName, args) => {
+    const getUnitrollerCall = (functionName: string, args: unknown[] = []) => {
         return {
             ...unitrollerContractConfig,
             functionName,
@@ -33,7 +33,7 @@ export function useLendFarms() {
             chainId: NATIVE_CHAIN_ID
         }
     }
-    const getPythOracleCall = (args) => {
+    const getPythOracleCall = (args: unknown[] = []) => {
         return {
             ...pythOracleConfig,
             functionName: 'getUnderlyingPrice',
@@ -42,7 +42,7 @@ export function useLendFarms() {
         }
     }
 
-    const getAssetCalls = (assetAddress) => {
+    const getAssetCalls = (assetAddress: string) => {
         return [
             getKErc20DelegatorViewCall(assetAddress, 'totalBorrows'),                // 0
             getKErc20DelegatorViewCall(assetAddress, 'totalSupply'),                 // 1
@@ -59,6 +59,7 @@ export function useLendFarms() {
     }
 
     const {data: assetInfo} = useReadContracts({
+        // @ts-ignore
         contracts: MARKETS.map(r => getAssetCalls(r.id)).flat()
     })
 
@@ -72,26 +73,30 @@ export function useLendFarms() {
             const underlyingSymbol = r.symbol.slice(1)
             return {
                 ...r,
-                totalBorrows: new BigNumber(assetInfo[i * infoLength]?.result),
-                totalSupply: new BigNumber(assetInfo[i * infoLength + 1]?.result),
-                totalReserves: new BigNumber(assetInfo[i * infoLength + 2]?.result),
-                cash: new BigNumber(assetInfo[i * infoLength + 3]?.result),
-                supplyRatePerTimestamp: new BigNumber(assetInfo[i * infoLength + 4]?.result),
-                borrowRatePerTimestamp: new BigNumber(assetInfo[i * infoLength + 5]?.result),
+                totalBorrows: new BigNumber((assetInfo[i * infoLength]?.result as bigint).toString()),
+                totalSupply: new BigNumber((assetInfo[i * infoLength + 1]?.result as bigint).toString()),
+                totalReserves: new BigNumber((assetInfo[i * infoLength + 2]?.result as bigint).toString()),
+                cash: new BigNumber((assetInfo[i * infoLength + 3]?.result as bigint).toString()),
+                supplyRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 4]?.result as bigint).toString()),
+                borrowRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 5]?.result as bigint).toString()),
                 // underlyingPrice: new BigNumber(underlyingPrice[i*infoLegth]?.result) / 10 ** (2 * 18 - underlyingDecimals),
                 underlying: assetInfo[i * infoLength + 6]?.result,
-                underlyingPrice: new BigNumber(assetInfo[i * infoLength + 7]?.result).div(new BigNumber(10).pow(new BigNumber(2 * 18 - underlyingDecimals))),
+                underlyingPrice: new BigNumber((assetInfo[i * infoLength + 7]?.result as bigint).toString())
+                    .div(
+                        new BigNumber(10)
+                            .pow(new BigNumber(2 * 18 - underlyingDecimals))
+                    ),
                 underlyingDecimals,
                 underlyingSymbol,
-                collateralFactorMantissa: new BigNumber(assetInfo[i * infoLength + 8]?.result[1]),
+                collateralFactorMantissa: new BigNumber((assetInfo[i * infoLength + 8]?.result?.[1] as bigint).toString()),
                 borrowPaused: assetInfo[i * infoLength + 9]?.result,
-                borrowCap: new BigNumber(assetInfo[i * infoLength + 10]?.result)
+                borrowCap: new BigNumber((assetInfo[i * infoLength + 10]?.result as bigint).toString())
             }
         })
     }, [assetInfo])
 }
 
-export function useLendPositions() {
+export function useLendPositions(): { id: string, balanceOfUnderlying: BigNumber, borrowBalanceCurrent: BigNumber }[] {
     const {address} = useAccount()
 
     const getPositionCalls = (assetAddress) => {
@@ -102,19 +107,24 @@ export function useLendPositions() {
     }
 
     const {data: positions} = useReadContracts({
+        // @ts-ignore
         contracts: MARKETS.map(r => getPositionCalls(r.id)).flat()
     })
 
     return useMemo(() => {
         if (!positions) {
-            return []
+            return [{
+                id: '',
+                balanceOfUnderlying: new BigNumber(0),
+                borrowBalanceCurrent: new BigNumber(0)
+            }]
         }
         const infoLength = positions.length / MARKETS.length
         return MARKETS?.map((r, i) => {
             return {
                 id: r.id,
-                balanceOfUnderlying: new BigNumber(positions[i * infoLength]?.result),
-                borrowBalanceCurrent: new BigNumber(positions[i * infoLength + 1]?.result)
+                balanceOfUnderlying: new BigNumber((positions[i * infoLength]?.result as bigint)?.toString()),
+                borrowBalanceCurrent: new BigNumber((positions[i * infoLength + 1]?.result as bigint)?.toString())
             }
         })
     }, [positions])
@@ -126,10 +136,11 @@ export function useLendPositions() {
  *          account liquidity in excess of collateral requirements,
  *          account shortfall below collateral requirements)
  */
-export function useAccountLiquidity() {
+export function useAccountLiquidity(): { accountLiquidity: BigNumber, marketsIn: string[] } {
     const {address} = useAccount()
     const unitrollerContractConfig = useUnitrollerContractConfig()
 
+    // @ts-ignore
     const {data: accountLiquidity} = useReadContract({
         ...unitrollerContractConfig,
         functionName: 'getAccountLiquidity',
@@ -137,6 +148,7 @@ export function useAccountLiquidity() {
         chainId: NATIVE_CHAIN_ID
     })
 
+    // @ts-ignore
     const {data: marketsIn} = useReadContract({
         ...unitrollerContractConfig,
         functionName: 'getAssetsIn',
@@ -147,165 +159,19 @@ export function useAccountLiquidity() {
     return useMemo(() => {
         if (!accountLiquidity || !marketsIn) {
             return {
-                accountLiquidity: 0,
+                accountLiquidity: new BigNumber(0),
                 marketsIn: []
             }
         }
         return {
-            accountLiquidity: new BigNumber(accountLiquidity?.[1]) / 10 ** 18,
-            marketsIn
+            accountLiquidity: new BigNumber((accountLiquidity?.[1] as bigint).toString())
+                .div(
+                    new BigNumber(10)
+                        .pow(new BigNumber(18))
+                ),
+            marketsIn: marketsIn as string[]
         }
     }, [accountLiquidity, marketsIn])
-}
-
-export function usePendingRewards() {
-    // const {account, chainId} = useActiveWeb3React()
-    // const doubleScale = 1e36
-    // const supplyScale = 1e54
-    // const borrowScale = 1e36
-    // const rewardTypes = ['0', '1']
-    // const assets = CONTRACTS[chainId!]
-    // const assetsAddresses = assets.map((r) => r.id)
-    // const ASSET_INTERFACE = new Interface(kErc20DelegatorABI)
-    // const rewardTypeMTokenArgs = []
-    // const rewardTypeMTokenAddressArgs = []
-    // rewardTypes.forEach(rewardType => {
-    //     assetsAddresses.forEach(asset => {
-    //         rewardTypeMTokenArgs.push([rewardType, asset])
-    //         rewardTypeMTokenAddressArgs.push([rewardType, asset, account])
-    //     })
-    // })
-    // const rewardTypeAddressArgs = rewardTypes.map(rewardType => {
-    //     return [rewardType, account]
-    // })
-    //
-    // const blockTimestamp = useCurrentBlockTimestamp()
-    // const unitrollerContract = useUnitrollerContract()
-    // const marketBorrowIndex = useMultipleContractSingleData(assetsAddresses, ASSET_INTERFACE, 'borrowIndex')
-    // const borrowStateResults = useSingleContractMultipleData(unitrollerContract, 'rewardBorrowState', rewardTypeMTokenArgs) //await unitroller.rewardBorrowState(rewardType, mToken.address)
-    // const borrowSpeed = useSingleContractMultipleData(unitrollerContract, 'borrowRewardSpeeds', rewardTypeMTokenArgs) //await unitroller.borrowRewardSpeeds(rewardType, mToken.address)
-    // const totalBorrows = useMultipleContractSingleData(assetsAddresses, ASSET_INTERFACE, 'totalBorrows')
-    // const totalSupply = useMultipleContractSingleData(assetsAddresses, ASSET_INTERFACE, 'totalSupply')
-    // const borrowerIndex = useSingleContractMultipleData(unitrollerContract, 'rewardBorrowerIndex', rewardTypeMTokenAddressArgs) //await unitroller.rewardBorrowerIndex(rewardType, mToken.address, wallet)
-    // const borrowBalanceStored = useMultipleContractSingleData(assetsAddresses, ASSET_INTERFACE, 'borrowBalanceStored', [account])
-    // const rewardAccrued = useSingleContractMultipleData(unitrollerContract, 'rewardAccrued', rewardTypeAddressArgs) //await unitroller.rewardAccrued(rewardType, wallet)
-    // const supplierTokens = useMultipleContractSingleData(assetsAddresses, ASSET_INTERFACE, 'balanceOf', [account])
-    // const supplyStateResults = useSingleContractMultipleData(unitrollerContract, 'rewardSupplyState', rewardTypeMTokenArgs) //await unitroller.rewardSupplyState(rewardType, mToken.address)
-    // const supplySpeed = useSingleContractMultipleData(unitrollerContract, 'supplyRewardSpeeds', rewardTypeMTokenArgs) //await unitroller.supplyRewardSpeeds(rewardType, mToken.address)
-    // const supplierIndexResults = useSingleContractMultipleData(unitrollerContract, 'rewardSupplierIndex', rewardTypeMTokenAddressArgs) //await unitroller.rewardSupplierIndex(rewardType, mToken.address, wallet)
-    // const initialIndexConstant = useSingleCallResult(unitrollerContract, 'initialIndexConstant') //await unitroller.initialIndexConstant();
-    //
-    // return useMemo(() => {
-    //     if (
-    //         !blockTimestamp ||
-    //         !marketBorrowIndex ||
-    //         !borrowStateResults ||
-    //         !borrowSpeed ||
-    //         !totalBorrows ||
-    //         !totalSupply ||
-    //         !borrowerIndex ||
-    //         !borrowBalanceStored ||
-    //         !rewardAccrued ||
-    //         !supplierTokens ||
-    //         !supplyStateResults ||
-    //         !supplySpeed ||
-    //         !supplierIndexResults ||
-    //         !initialIndexConstant
-    //     ) {
-    //         return null
-    //     }
-    //     return rewardTypes.map((rewardLabel, rewardType) => {
-    //         // todo
-    //         const symbol = rewardType == 0 ? 'KAWA' : 'SEI'
-    //         const address = rewardType == 0 ? '0xBb8d88bcD9749636BC4D2bE22aaC4Bb3B01A58F1' : '0x98878B06940aE243284CA214f92Bb71a2b032B8A'
-    //
-    //         let amount = 0
-    //         assetsAddresses.forEach((asset, aid) => {
-    //
-    //             const resultIndex = rewardType * assetsAddresses.length + aid
-    //
-    //             // updateRewardBorrowIndex
-    //             // let borrowState =
-    //             //   {
-    //             //     index: Number(borrowStateResults[resultIndex]?.result?.index),
-    //             //     timestamp: Number(borrowStateResults[resultIndex]?.result?.timestamp)
-    //             //   }
-    //             // const deltaTimestampsB = Number(blockTimestamp) - borrowState.timestamp
-    //             // if (deltaTimestampsB > 0 && Number(borrowSpeed[resultIndex]?.result) > 0) {
-    //             //   const borrowAmount = Number(totalBorrows[aid]?.result) / Number(marketBorrowIndex[aid]?.result)
-    //             //   const wellAccrued = deltaTimestampsB * Number(borrowSpeed[resultIndex]?.result)
-    //             //   const ratio = borrowAmount > 0 ? wellAccrued * doubleScale / borrowAmount : 0
-    //             //   borrowState.index = borrowState.index + ratio
-    //             // }
-    //
-    //             // distributeBorrowerReward
-    //             const borrowIndex = Number(borrowStateResults[resultIndex]?.result?.index)
-    //             if (Number(borrowerIndex[resultIndex]?.result) > 0) {
-    //                 const deltaIndexB = borrowIndex - Number(borrowerIndex[resultIndex]?.result)
-    //                 const borrowerAmount = Number(borrowBalanceStored[aid]?.result) / Number(marketBorrowIndex[aid]?.result)
-    //                 const borrowerDelta = borrowerAmount * deltaIndexB
-    //                 const borrowerAccrued = Number(rewardAccrued[rewardType]?.result) + borrowerDelta
-    //                 amount = borrowerAccrued / borrowScale + amount
-    //             }
-    //
-    //             // updateRewardSupplyIndex
-    //             const supplyState =
-    //                 {
-    //                     index: Number(supplyStateResults[resultIndex]?.result?.index),
-    //                     timestamp: Number(supplyStateResults[resultIndex]?.result?.timestamp)
-    //                 }
-    //             const deltaTimestampsS = Number(blockTimestamp) - supplyState.timestamp
-    //             if (deltaTimestampsS > 0 && Number(supplySpeed[resultIndex]?.result) > 0) {
-    //                 const supplyTokens = Number(totalSupply[aid]?.result)
-    //                 const wellAccrued = deltaTimestampsS * Number(supplySpeed[resultIndex]?.result)
-    //                 const ratio = supplyTokens > 0 ? wellAccrued * doubleScale / supplyTokens : 0
-    //                 supplyState.index = supplyState.index + ratio
-    //             }
-    //
-    //             // distributeSupplierReward
-    //             const supplyIndex = supplyState.index
-    //
-    //             let supplierIndex = Number(supplierIndexResults[resultIndex]?.result)
-    //             if (supplierIndex === 0 && supplyIndex > 0) {
-    //                 supplierIndex = Number(initialIndexConstant?.result)
-    //             }
-    //             const deltaIndexS = supplyIndex - supplierIndex
-    //             const supplierDelta = Number(supplierTokens[aid]?.result) * deltaIndexS
-    //             const supplierAccrued = Number(rewardAccrued[rewardType]?.result) + supplierDelta
-    //             amount = supplierAccrued / supplyScale + amount
-    //         })
-    //
-    //         return {
-    //             id: rewardType,
-    //             symbol,
-    //             amount,
-    //             decimals: 18,
-    //             address
-    //         }
-    //
-    //     })
-    //
-    // }, [
-    //     blockTimestamp,
-    //     marketBorrowIndex,
-    //     borrowStateResults,
-    //     borrowSpeed,
-    //     totalBorrows,
-    //     totalSupply,
-    //     borrowerIndex,
-    //     borrowBalanceStored,
-    //     rewardAccrued,
-    //     supplierTokens,
-    //     supplyStateResults,
-    //     supplySpeed,
-    //     supplierIndexResults,
-    //     initialIndexConstant
-    // ])
-}
-
-export function useLendFarm(id) {
-    const farms = useLendFarms()
-    return farms?.find(r => r.id == id)
 }
 
 export function useFarms() {
@@ -330,10 +196,16 @@ export function useFarms() {
         const reserves = pool?.totalReserves / 10 ** pool?.underlyingDecimals
         const reservesTVL = reserves * price
         const position = positions.find((position) => position.id === pool.id)
-        const balanceOfUnderlying = position?.balanceOfUnderlying / 10 ** pool?.underlyingDecimals
-        const balanceOfUnderlyingTVL = balanceOfUnderlying * price
-        const borrowBalanceCurrent = position?.borrowBalanceCurrent / 10 ** pool?.underlyingDecimals
-        const borrowBalanceCurrentTVL = borrowBalanceCurrent * price
+        const balanceOfUnderlying = position?.balanceOfUnderlying.div(
+            new BigNumber(10)
+                .pow(pool?.underlyingDecimals ?? new BigNumber(18))
+        )
+        const balanceOfUnderlyingTVL = balanceOfUnderlying?.multipliedBy(price)
+        const borrowBalanceCurrent = position?.borrowBalanceCurrent.div(
+            new BigNumber(10)
+                .pow(pool?.underlyingDecimals ?? new BigNumber(18))
+        )
+        const borrowBalanceCurrentTVL = borrowBalanceCurrent?.multipliedBy(price)
         const supplyRate = new BigNumber(pool?.supplyRatePerTimestamp?.toString())
         const supplyBase = supplyRate?.shiftedBy(-18).times(TIMESTAMPS_PER_DAY).plus(1)
         const supplyAPY = supplyBase?.pow(DAYS_PER_YEAR).minus(1).times(100)

@@ -43,10 +43,10 @@ export default function Panel(): JSX.Element {
         error,
         isPending
     } = useMarketContract(
-        asset,
+        asset!,
         farm?.client,
         farm?.chainId,
-        type
+        type!
     )
     const chainId = useChainId()
     const {address} = useAccount()
@@ -86,8 +86,8 @@ export default function Panel(): JSX.Element {
             ? farm?.borrowCap - farm?.liquidity - (10*(farm?.underlyingDecimals/2))/(10**farm?.underlyingDecimals)
             : farm?.liquidity - (10*(farm?.underlyingDecimals/2))/(10**farm?.underlyingDecimals)
         const borrowCash = borrowAvailable > cashFarmMaxToBorrow ? cashFarmMaxToBorrow : borrowAvailable
-        const userAssetsMaxToWithdraw = (userInfo?.accountLiquidity / farm?.price) / farm?.collateralFactorMantissa
-        const userAssetsMaxToBorrow = userInfo?.accountLiquidity / farm?.price
+        const userAssetsMaxToWithdraw = userInfo?.accountLiquidity?.div(farm?.price).div(farm?.collateralFactorMantissa)
+        const userAssetsMaxToBorrow = userInfo?.accountLiquidity?.div(farm?.price)
         const value = {
             [TYPES.DEPOSIT]: formatRawAmount(
                 isNative ? Number(underlyingBalance) - (10**16): underlyingBalance,
@@ -98,7 +98,7 @@ export default function Panel(): JSX.Element {
                     ? farm?.balanceOfUnderlying
                     : userAssetsMaxToWithdraw
                 : farm?.balanceOfUnderlying,
-            [TYPES.BORROW]: userAssetsMaxToBorrow > borrowCash
+            [TYPES.BORROW]: userAssetsMaxToBorrow?.gt(borrowCash)
                 ? borrowCash
                 : userAssetsMaxToBorrow,
             [TYPES.REPAY]: farm?.borrowBalanceCurrent

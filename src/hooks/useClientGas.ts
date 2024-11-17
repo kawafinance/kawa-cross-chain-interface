@@ -20,7 +20,7 @@ export function useMessageHubAddress(clientAddress: string): string {
     return messageHubAddress as string;
 }
 
-export default function useClientGas(clientAddress: string, type: string) {
+export default function useClientGas(clientAddress: string, type: string): bigint {
     const {address} = useAccount()
     const messageHubAddress = useMessageHubAddress(clientAddress)
     const messageHubContractConfig = useMessageHubContractConfig(messageHubAddress)
@@ -60,6 +60,6 @@ export default function useClientGas(clientAddress: string, type: string) {
     useEffect(() => {
         refetch();
     }, [messageHubContractConfig, payload, refetch]);
-    console.log(messageHubAddress, gas, payload)
-    return gas ? gas  : BigInt(0)
+
+    return gas ? gas as bigint : BigInt(0)
 }

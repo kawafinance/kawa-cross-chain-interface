@@ -9,7 +9,7 @@ import useTransactionStatus from "./useTransactionStatus.ts";
 export function useToken(token?: string, spender?: string, amountToCheck?: string) {
     const {address} = useAccount()
     const owner = address
-    const contract = useTokenContractConfig(token)
+    const contract = useTokenContractConfig(token!)
     const {
         data: hash,
         error,
