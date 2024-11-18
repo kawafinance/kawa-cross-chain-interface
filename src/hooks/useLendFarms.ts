@@ -256,7 +256,7 @@ export function useUserInfo() {
 
     const farms = useFarms()
     const {accountLiquidity} = useAccountLiquidity()
-    debugger
+
     const borrowBalance = farms?.reduce((previousValue, currentValue) => {
         return previousValue.plus(isNaN(currentValue?.borrowBalanceCurrentTVL) ? new BigNumber(0): currentValue?.borrowBalanceCurrentTVL)
     }, new BigNumber(0))
