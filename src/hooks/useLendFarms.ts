@@ -256,17 +256,17 @@ export function useUserInfo() {
 
     const farms = useFarms()
     const {accountLiquidity} = useAccountLiquidity()
-
+    debugger
     const borrowBalance = farms?.reduce((previousValue, currentValue) => {
-        return previousValue + (isNaN(currentValue?.borrowBalanceCurrentTVL) ? 0 : currentValue?.borrowBalanceCurrentTVL)
-    }, 0)
+        return previousValue.plus(isNaN(currentValue?.borrowBalanceCurrentTVL) ? new BigNumber(0): currentValue?.borrowBalanceCurrentTVL)
+    }, new BigNumber(0))
 
     const supplyBalance = farms?.reduce((previousValue, currentValue) => {
-        return previousValue + (isNaN(currentValue?.balanceOfUnderlyingTVL) ? 0 : currentValue?.balanceOfUnderlyingTVL)
-    }, 0)
+        return previousValue.plus(isNaN(currentValue?.balanceOfUnderlyingTVL) ? new BigNumber(0) : currentValue?.balanceOfUnderlyingTVL)
+    }, new BigNumber(0))
 
-    const totalAvailable = accountLiquidity + borrowBalance
-    const borrowPerc = borrowBalance / totalAvailable * 100
+    const totalAvailable = accountLiquidity.plus(borrowBalance)
+    const borrowPerc = borrowBalance.div(totalAvailable).multipliedBy(100)
 
     return {
         borrowBalance,
