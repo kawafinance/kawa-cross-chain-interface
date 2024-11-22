@@ -33,12 +33,12 @@ const ListItemDetails = ({type, farm}) => {
     const [transactionAction, setTransactionAction] = useState('')
     const futureMax =
         farm?.inMarket
-            ? userInfo?.totalAvailable - (farm?.balanceOfUnderlyingTVL * farm?.collateralFactorMantissa)
-            : userInfo?.totalAvailable + (farm?.balanceOfUnderlyingTVL * farm?.collateralFactorMantissa)
+            ? userInfo?.totalAvailable.minus(farm?.balanceOfUnderlyingTVL.multipliedBy(farm?.collateralFactorMantissa))
+            : userInfo?.totalAvailable.plus(farm?.balanceOfUnderlyingTVL.multipliedBy(farm?.collateralFactorMantissa))
 
     const collateralActionAvailable =
         userInfo?.borrowBalance === 0 ||
-        futureMax > 0 && futureMax > userInfo?.borrowBalance
+        futureMax.gt(0) && futureMax > userInfo?.borrowBalance
 
     const borrowButtonDisable =
         farm?.borrowPaused ||

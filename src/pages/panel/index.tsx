@@ -125,7 +125,7 @@ export default function Panel(): JSX.Element {
             [TYPES.REPAY]: 0
         }[type!]
 
-        return disabled ? userInfo?.totalAvailable : userInfo?.totalAvailable + value
+        return disabled ? userInfo?.totalAvailable : userInfo?.totalAvailable.plus(value)
     }, [farm, userInfo, amount, disabled])
 
     useEffect(() => {
@@ -136,6 +136,7 @@ export default function Panel(): JSX.Element {
             && !sentSwitchChain
         ) {
             try{
+                console.log(farm?.chainId)
                 switchChain({ chainId: farm?.chainId })
                 setSentSwitchChain(true)
             }catch (e){
