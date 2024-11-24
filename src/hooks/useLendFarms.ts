@@ -81,7 +81,7 @@ export function useLendFarms() {
                 borrowRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 5]?.result as bigint).toString()),
                 // underlyingPrice: new BigNumber(underlyingPrice[i*infoLegth]?.result) / 10 ** (2 * 18 - underlyingDecimals),
                 underlying: assetInfo[i * infoLength + 6]?.result,
-                underlyingPrice: new BigNumber((assetInfo[i * infoLength + 7]?.result as bigint).toString())
+                underlyingPrice: new BigNumber((assetInfo[i * infoLength + 7]?.result as bigint)?.toString())
                     .div(
                         new BigNumber(10)
                             .pow(new BigNumber(2 * 18 - underlyingDecimals))
