@@ -3,7 +3,7 @@ import {BUTTON_VARIANTS, Button} from './Button';
 import {capitalizeFirstLetter, shortenTransactionID} from "../utils/convert";
 import {LinkIcon} from "@heroicons/react/24/solid";
 import Spinner from "./Spinner";
-import {getExplorerLink, getAxelarLink} from "../utils/getExplorerLink";
+import {getExplorerLink, getAxelarLink, getLayerZeroLink} from "../utils/getExplorerLink";
 import {useChainId} from "wagmi";
 
 export enum TRANSACTION_STATE {
@@ -40,8 +40,8 @@ const TransactionModal = ({isOpen, onClose, state, hash, txChainId, type, transf
         window.open(getExplorerLink(hash_, txChainId_, 'transaction'), '_blank')
     }
 
-    const handleAxelarLinkRedirect = (hash_) => {
-        window.open(getAxelarLink(hash_), '_blank')
+    const handleLayerZeroLinkRedirect = (hash_) => {
+        window.open(getLayerZeroLink(hash_), '_blank')
     }
 
     return (
@@ -98,7 +98,7 @@ const TransactionModal = ({isOpen, onClose, state, hash, txChainId, type, transf
                                         {hash && <span className='ml-2' onClick={() => handleLinkRedirect(hash, txChainId)}>
                                             <LinkIcon className="h-6 w-4 hover:cursor-pointer"/>
                                         </span>}
-                                        {hash && <span className='ml-2' onClick={() => handleAxelarLinkRedirect(hash)}>
+                                        {hash && <span className='ml-2' onClick={() => handleLayerZeroLinkRedirect(hash)}>
                                             <LinkIcon className="h-6 w-4 hover:cursor-pointer"/>
                                         </span>}
                                     </div>

@@ -17,7 +17,11 @@ export function getExplorerLink (hash: string, chainId: ChainId | undefined, typ
 }
 
 export function getAxelarLink (hash: string): string {
-        return `https://testnet.axelarscan.io/gmp/${hash}`
+    return `https://testnet.axelarscan.io/gmp/${hash}`
+}
+
+export function getLayerZeroLink (hash: string): string {
+    return `https://testnet.layerzeroscan.com/tx/${hash}`
 }
 
 

@@ -9,13 +9,15 @@ import {useMemo} from "react";
 import {getContract, isNative} from "../utils/contract";
 import COMPTROLLER_ABI from '../constants/abis/comptroller.json'
 import MARKET_ABI from '../constants/abis/market.json'
+import KCLIENT_ABI from '../constants/abis/kclient.json'
+import KERC20CROSSCHAIN_ABI from '../constants/abis/kerc20crosschain.json'
 import KWETHDELEGATE_ABI from '../constants/abis/kWethDelegate.json'
 import WETHROUTER_ABI from '../constants/abis/wethRouter.json'
 import PYTH_ORACLE_ABI from '../constants/abis/pythOracle.json'
 import MULTICALL_ABI from '../constants/abis/multicall.json'
 import PRICE_PROVIDER_ABI from '../constants/abis/priceProvider.json'
 import ERC20_ABI from '../constants/abis/erc20.json'
-import MESSAGE_HUB_ABI from '../constants/abis/messageHub.json'
+import CENTRALHUB_ABI from '../constants/abis/centralHub.json'
 import {useAccount, useChainId} from "wagmi";
 import {useEthersProvider, useEthersSigner } from "./useSignerOrProvider.ts";
 
@@ -59,21 +61,27 @@ export function usePriceProviderContract(): Contract | null {
 }
 
 export function useMarketContractConfig(
-    tokenAddress?: string
+    tokenAddress?: string,
+    isClient?: boolean,
 ): ContractConfig {
-    const abi = isNative(tokenAddress!) ? KWETHDELEGATE_ABI : MARKET_ABI
+    const abi = isNative(tokenAddress!)
+        ? KWETHDELEGATE_ABI
+        : isClient
+            ? KCLIENT_ABI
+            : KERC20CROSSCHAIN_ABI
+
     return {
         abi,
         address: tokenAddress ?? ''
     } as const
 }
 
-export function useMessageHubContractConfig(
-    messageHubAddress?: string
+export function useCentralHubContractConfig(
+    CentralHubAddress?: string
 ): ContractConfig {
     return {
-        abi: MESSAGE_HUB_ABI,
-        address: messageHubAddress ?? ''
+        abi: CENTRALHUB_ABI,
+        address: CentralHubAddress ?? ''
     } as const
 }
 

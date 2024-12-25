@@ -67,32 +67,36 @@ export function useLendFarms() {
         if (!assetInfo) {
             return []
         }
-        const infoLength = assetInfo.length / MARKETS.length
-        return MARKETS.map((r, i) => {
-            const underlyingDecimals = 18//(r.symbol == 'kSEI' || r.symbol == 'kSEI') ? 18 : decimals[i]?.result?.[0]
-            const underlyingSymbol = r.symbol.slice(1)
-            return {
-                ...r,
-                totalBorrows: new BigNumber((assetInfo[i * infoLength]?.result as bigint).toString()),
-                totalSupply: new BigNumber((assetInfo[i * infoLength + 1]?.result as bigint).toString()),
-                totalReserves: new BigNumber((assetInfo[i * infoLength + 2]?.result as bigint).toString()),
-                cash: new BigNumber((assetInfo[i * infoLength + 3]?.result as bigint).toString()),
-                supplyRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 4]?.result as bigint).toString()),
-                borrowRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 5]?.result as bigint).toString()),
-                // underlyingPrice: new BigNumber(underlyingPrice[i*infoLegth]?.result) / 10 ** (2 * 18 - underlyingDecimals),
-                underlying: assetInfo[i * infoLength + 6]?.result,
-                underlyingPrice: new BigNumber((assetInfo[i * infoLength + 7]?.result as bigint)?.toString())
-                    .div(
-                        new BigNumber(10)
-                            .pow(new BigNumber(2 * 18 - underlyingDecimals))
-                    ),
-                underlyingDecimals,
-                underlyingSymbol,
-                collateralFactorMantissa: new BigNumber((assetInfo[i * infoLength + 8]?.result?.[1] as bigint).toString()),
-                borrowPaused: assetInfo[i * infoLength + 9]?.result,
-                borrowCap: new BigNumber((assetInfo[i * infoLength + 10]?.result as bigint).toString())
-            }
-        })
+        try {
+            const infoLength = assetInfo.length / MARKETS.length
+            return MARKETS.map((r, i) => {
+                const underlyingDecimals = 18//(r.symbol == 'kSEI' || r.symbol == 'kSEI') ? 18 : decimals[i]?.result?.[0]
+                const underlyingSymbol = r.symbol.slice(1)
+                return {
+                    ...r,
+                    totalBorrows: new BigNumber((assetInfo[i * infoLength]?.result as bigint).toString()),
+                    totalSupply: new BigNumber((assetInfo[i * infoLength + 1]?.result as bigint).toString()),
+                    totalReserves: new BigNumber((assetInfo[i * infoLength + 2]?.result as bigint).toString()),
+                    cash: new BigNumber((assetInfo[i * infoLength + 3]?.result as bigint).toString()),
+                    supplyRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 4]?.result as bigint).toString()),
+                    borrowRatePerTimestamp: new BigNumber((assetInfo[i * infoLength + 5]?.result as bigint).toString()),
+                    // underlyingPrice: new BigNumber(underlyingPrice[i*infoLegth]?.result) / 10 ** (2 * 18 - underlyingDecimals),
+                    underlying: assetInfo[i * infoLength + 6]?.result,
+                    underlyingPrice: new BigNumber((assetInfo[i * infoLength + 7]?.result as bigint)?.toString())
+                        .div(
+                            new BigNumber(10)
+                                .pow(new BigNumber(2 * 18 - underlyingDecimals))
+                        ),
+                    underlyingDecimals,
+                    underlyingSymbol,
+                    collateralFactorMantissa: new BigNumber((assetInfo[i * infoLength + 8]?.result?.[1] as bigint).toString()),
+                    borrowPaused: assetInfo[i * infoLength + 9]?.result,
+                    borrowCap: new BigNumber((assetInfo[i * infoLength + 10]?.result as bigint).toString())
+                }
+            })
+        }catch (e){
+            return []
+        }
     }, [assetInfo])
 }
 

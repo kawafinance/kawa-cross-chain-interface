@@ -14,7 +14,7 @@ import {MARKETS, NATIVE_CHAIN_ID} from "../../constants/contracts.ts";
 import {MaxUint256} from '@ethersproject/constants'
 import {BigNumber} from "bignumber.js";
 import useIsMobile from "../../hooks/useIsMobile";
-import {useAccount, useChainId, useSwitchChain, useBalance } from "wagmi";
+import {useAccount, useChainId, useSwitchChain, useBalance} from "wagmi";
 import {useAddRecentTransaction} from "@rainbow-me/rainbowkit";
 
 
@@ -31,26 +31,9 @@ export default function Panel(): JSX.Element {
     const {type, asset} = useParams()
 
     const farm = useFarm(asset)
-    const {
-        mint,
-        redeem,
-        redeemUnderlying,
-        borrow,
-        repayBorrow,
-        repayBorrowBehalf,
-        hash,
-        txChainId,
-        error,
-        isPending
-    } = useMarketContract(
-        asset!,
-        farm?.client,
-        farm?.chainId,
-        type!
-    )
     const chainId = useChainId()
     const {address} = useAccount()
-    const { switchChain } = useSwitchChain()
+    const {switchChain} = useSwitchChain()
     const addRecentTransaction = useAddRecentTransaction();
 
     const userInfo = useUserInfo()
@@ -76,6 +59,24 @@ export default function Panel(): JSX.Element {
     const [sendMax, setSendMax] = useState(false)
     const [trasnferAmount, setTransferAmount] = useState('')
     const amountRaw = useMemo(() => formatAmountToRaw(amount, farm?.underlyingDecimals), [amount])
+    const isClient = type === TYPES.DEPOSIT || type === TYPES.REPAY
+    const {
+        mint,
+        redeem,
+        redeemUnderlying,
+        borrow,
+        repayBorrowBehalf,
+        hash,
+        txChainId,
+        error,
+        isPending
+    } = useMarketContract(
+        asset!,
+        farm?.client,
+        farm?.chainId,
+        type!,
+        isClient
+    )
 
     // const {needsApprove, approve, hash: approveHash, error: approveError, isPending: approveIsPending } = useToken(farm?.underlying, farm?.id, amountRaw)
 
@@ -83,14 +84,14 @@ export default function Panel(): JSX.Element {
         const isNative = true//farm?.id == MARKETS.find(r => r.symbol == 'kSEI')?.id
         const cashFarmMaxToBorrow = farm?.cash / 10 ** farm?.underlyingDecimals
         const borrowAvailable = farm?.borrowCap > 0
-            ? farm?.borrowCap - farm?.liquidity - (10*(farm?.underlyingDecimals/2))/(10**farm?.underlyingDecimals)
-            : farm?.liquidity - (10*(farm?.underlyingDecimals/2))/(10**farm?.underlyingDecimals)
+            ? farm?.borrowCap - farm?.liquidity - (10 * (farm?.underlyingDecimals / 2)) / (10 ** farm?.underlyingDecimals)
+            : farm?.liquidity - (10 * (farm?.underlyingDecimals / 2)) / (10 ** farm?.underlyingDecimals)
         const borrowCash = borrowAvailable > cashFarmMaxToBorrow ? cashFarmMaxToBorrow : borrowAvailable
         const userAssetsMaxToWithdraw = userInfo?.accountLiquidity?.div(farm?.price).div(farm?.collateralFactorMantissa)
         const userAssetsMaxToBorrow = userInfo?.accountLiquidity?.div(farm?.price)
         const value = {
             [TYPES.DEPOSIT]: formatRawAmount(
-                isNative ? Number(underlyingBalance) - (10**16): underlyingBalance,
+                isNative ? Number(underlyingBalance) - (10 ** 16) : underlyingBalance,
                 farm?.underlyingDecimals
             ),
             [TYPES.WITHDRAW]: userInfo?.borrowBalance > 0
@@ -110,11 +111,11 @@ export default function Panel(): JSX.Element {
         const value = {
             [TYPES.DEPOSIT]: 0,
             [TYPES.WITHDRAW]: 0,
-            [TYPES.BORROW]: Number(amount) * farm?.underlyingPrice,
-            [TYPES.REPAY]: -(Number(amount) * farm?.underlyingPrice)
+            [TYPES.BORROW]: new BigNumber(amount).multipliedBy(farm?.underlyingPrice),
+            [TYPES.REPAY]: new BigNumber(amount).multipliedBy(farm?.underlyingPrice).multipliedBy(-1)
         }[type!]
 
-        return disabled ? userInfo?.borrowBalance : userInfo?.borrowBalance + value
+        return disabled ? userInfo?.borrowBalance : userInfo?.borrowBalance.plus(value)
     }, [farm, userInfo, amount, disabled])
 
     const futureMax = useMemo(() => {
@@ -135,23 +136,22 @@ export default function Panel(): JSX.Element {
             && chainId !== farm?.chainId
             && !sentSwitchChain
         ) {
-            try{
-                console.log(farm?.chainId)
-                switchChain({ chainId: farm?.chainId })
+            try {
+                switchChain({chainId: farm?.chainId})
                 setSentSwitchChain(true)
-            }catch (e){
+            } catch (e) {
                 console.error(e)
             }
-        }else if(
+        } else if (
             farm?.chainId
             && (type === TYPES.WITHDRAW || type === TYPES.BORROW)
             && chainId !== NATIVE_CHAIN_ID
             && !sentSwitchChain
         ) {
-            try{
-                switchChain({ chainId: NATIVE_CHAIN_ID })
+            try {
+                switchChain({chainId: NATIVE_CHAIN_ID})
                 setSentSwitchChain(true)
-            }catch (e){
+            } catch (e) {
                 console.error(e)
             }
         }
@@ -160,14 +160,14 @@ export default function Panel(): JSX.Element {
     useEffect(() => {
         if (
             ((type === TYPES.DEPOSIT || type === TYPES.REPAY)
-            && chainId !== farm?.chainId)
+                && chainId !== farm?.chainId)
             ||
             ((type === TYPES.WITHDRAW || type === TYPES.BORROW)
                 && chainId !== NATIVE_CHAIN_ID)
-        ){
+        ) {
             setDisabled(true)
             setButtonLabel('You\'ve are on the wrong network')
-        }else if (Number(max) === 0) {
+        } else if (Number(max) === 0) {
             setDisabled(true)
             setButtonLabel('You\'ve reached the limit')
         } else if (Number(amount) === 0) {
@@ -181,7 +181,7 @@ export default function Panel(): JSX.Element {
             // if ((type === TYPES.DEPOSIT || type === TYPES.REPAY) && needsApprove) {
             //     setButtonLabel('Approve')
             // } else {
-                setButtonLabel(capitalizeFirstLetter(type))
+            setButtonLabel(capitalizeFirstLetter(type))
             // }
         }
     }, [amount, max, chainId])
@@ -235,34 +235,34 @@ export default function Panel(): JSX.Element {
         // if ((type === TYPES.DEPOSIT || type === TYPES.REPAY) && needsApprove) {
         //     tx = approve()
         // } else {
-            let repayAmount
-            switch (type) {
-                case TYPES.DEPOSIT:
-                    tx = mint(amountRaw)
-                    break;
-                case TYPES.WITHDRAW:
-                    sendMax && userInfo?.borrowBalance === 0
-                        ? tx = redeem(redeemMaxAmount)
-                        : tx = redeemUnderlying(amountRaw)
-                    break;
-                case  TYPES.BORROW:
-                    tx = borrow(amountRaw)
-                    break;
-                case  TYPES.REPAY:
-                    repayAmount =
-                        sendMax
-                            ? farm?.id == MARKETS.find(r => r.symbol == 'kSEI' || r.symbol == 'kSEI')?.id
-                                ? new BigNumber(amountRaw).plus(10 ** (farm?.underlyingDecimals - 3)).toFixed(0)
-                                : MaxUint256.toString() // formatAmountToRaw(farm?.borrowBalanceCurrent, farm?.underlyingDecimals)
-                            : amountRaw
-                    tx = repayBorrowBehalf(address, repayAmount, sendMax)
-                    break;
+        let repayAmount
+        switch (type) {
+            case TYPES.DEPOSIT:
+                tx = mint(amountRaw)
+                break;
+            case TYPES.WITHDRAW:
+                sendMax && userInfo?.borrowBalance === 0
+                    ? tx = redeem(redeemMaxAmount)
+                    : tx = redeemUnderlying(amountRaw)
+                break;
+            case  TYPES.BORROW:
+                tx = borrow(amountRaw)
+                break;
+            case  TYPES.REPAY:
+                repayAmount =
+                    sendMax
+                        ? farm?.id == MARKETS.find(r => r.symbol == 'kSEI' || r.symbol == 'kSEI')?.id
+                            ? new BigNumber(amountRaw).plus(10 ** (farm?.underlyingDecimals - 3)).toFixed(0)
+                            : MaxUint256.toString() // formatAmountToRaw(farm?.borrowBalanceCurrent, farm?.underlyingDecimals)
+                        : amountRaw
+                tx = repayBorrowBehalf(address, repayAmount, sendMax)
+                break;
 
-            }
-            // dataActions?.refetch()
-            setAmount('')
-            setPercentage(0)
-            setSendMax(false)
+        }
+        // dataActions?.refetch()
+        setAmount('')
+        setPercentage(0)
+        setSendMax(false)
         // }
     }
 
@@ -280,22 +280,22 @@ export default function Panel(): JSX.Element {
         //         }
         //     }
         // }else {
-            if (!isPending) {
-                if (hash) {
-                    addRecentTransaction({
-                        hash,
-                        description: `${capitalizeFirstLetter(type)} ${farm?.underlyingSymbol}`
-                    })
-                    setTransactionState(TRANSACTION_STATE.CONFIRMED)
-                } else {
-                    setTransactionState(TRANSACTION_STATE.FAILED)
-                }
+        if (!isPending) {
+            if (hash) {
+                addRecentTransaction({
+                    hash,
+                    description: `${capitalizeFirstLetter(type)} ${farm?.underlyingSymbol}`
+                })
+                setTransactionState(TRANSACTION_STATE.CONFIRMED)
+            } else {
+                setTransactionState(TRANSACTION_STATE.FAILED)
+            }
             // }
         }
     }, [hash, isPending]);
 
     useEffect(() => {
-        if (error) console.log(error.message)
+        if (error) console.error(error.message)
     }, [error]);
 
     const handleOnBack = () => {

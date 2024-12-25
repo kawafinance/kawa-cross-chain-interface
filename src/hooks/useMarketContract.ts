@@ -5,10 +5,10 @@ import {
 } from "./useContract.ts";
 import {useAccount, useChainId, useWriteContract} from "wagmi";
 import {isNative} from "../utils/contract.ts"
-import useClientGas from "./useClientGas.ts";
+import useMessageGas from "./useMessageGas.ts";
 import {ChainId} from "../constants/chains.ts";
 
-export default function useMarketContract(assetAddress:string, clientAddress: string, farmChainId: ChainId, type: string) {
+export default function useMarketContract(assetAddress: string, clientAddress: string, farmChainId: ChainId, type: string, isClient: boolean) {
     const {address} = useAccount()
     const chainId = useChainId()
 
@@ -23,14 +23,14 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
 
     const contractAddress = isNative(assetAddress)
         ? assetAddress
-        : farmChainId === chainId
+        : isClient
             ? clientAddress
             : assetAddress
 
-    const assetContract = useMarketContractConfig(contractAddress)
+    const assetContract = useMarketContractConfig(contractAddress, isClient)
     const wethRouterContract = useWEthRouterContractConfig()
-    const clientGas = useClientGas(contractAddress, type)
-    const messageGas = isNative(assetAddress) ? BigInt(0) : clientGas;
+    const clientGas = useMessageGas(contractAddress, type)
+    const messageGas = isNative(assetAddress) ? BigInt(0) : BigInt(clientGas) //new BigNumber(clientGas.toString()).multipliedBy(1.1).toBigInt();
 
     // Mint
     const mint = useCallback(
@@ -50,7 +50,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                         writeContract({
                             ...assetContract,
                             functionName: 'mint',
-                            value: messageGas + BigInt(amount),
+                            value: BigInt(messageGas) + BigInt(amount),
                             args: [BigInt(amount)]
                         })
                     }
@@ -61,10 +61,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                 console.error(e)
                 return e
             }
-        }
-        ,
-        [assetContract]
-    )
+        }, [assetContract])
 
 // Redeem
     const redeem = useCallback(
@@ -84,9 +81,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                 console.error(e)
                 return e
             }
-        },
-        [assetContract]
-    )
+        }, [assetContract])
 
 // RedeemUnderlying
     const redeemUnderlying = useCallback(
@@ -106,9 +101,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                 console.error(e)
                 return e
             }
-        },
-        [assetContract]
-    )
+        }, [assetContract])
 
 // borrow
     const borrow = useCallback(
@@ -128,9 +121,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                 console.error(e)
                 return e
             }
-        },
-        [assetContract]
-    )
+        }, [assetContract])
 
 // repay
     const repayBorrow = useCallback(
@@ -164,9 +155,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                 console.error(e)
                 return e
             }
-        },
-        [assetContract]
-    )
+        }, [assetContract])
 
 // repayBehalf
     const repayBorrowBehalf = useCallback(
@@ -205,9 +194,7 @@ export default function useMarketContract(assetAddress:string, clientAddress: st
                     return e
                 }
             }
-        },
-        [assetContract]
-    )
+        }, [assetContract])
 
     return {mint, redeem, redeemUnderlying, borrow, repayBorrow, repayBorrowBehalf, hash, txChainId, error, isPending}
 }
