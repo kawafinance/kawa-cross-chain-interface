@@ -2,7 +2,7 @@ import {useCallback, useState} from 'react'
 import {
     useMarketContractConfig,
     useWEthRouterContractConfig
-} from "./useContract.ts";
+} from "./useContractConfig.ts";
 import {useAccount, useChainId, useWriteContract} from "wagmi";
 import {isNative} from "../utils/contract.ts"
 import useMessageGas from "./useMessageGas.ts";

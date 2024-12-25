@@ -1,6 +1,6 @@
 import {useEffect, useMemo} from "react";
 import {useAccount, useReadContract} from 'wagmi';
-import {useCentralHubContractConfig, useMarketContractConfig} from "./useContract.ts";
+import {useCentralHubContractConfig, useMarketContractConfig} from "./useContractConfig.ts";
 import {TYPES} from "../pages/panel";
 import {ethers} from "ethers";
 

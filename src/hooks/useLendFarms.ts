@@ -3,7 +3,7 @@ import {MARKETS, NATIVE_CHAIN_ID} from "../constants/contracts.ts";
 import {
     usePythOracleContractConfig,
     useUnitrollerContractConfig
-} from "./useContract";
+} from "./useContractConfig.ts";
 import kErc20DelegatorABI from '../constants/abis/kerc20delegator.json'
 import {BigNumber} from "bignumber.js";
 import {useAccount, useReadContract, useReadContracts} from "wagmi";

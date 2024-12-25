@@ -1,4 +1,4 @@
-import {useTokenContract, useTokenContractConfig} from "./useContract";
+import {useTokenContractConfig} from "./useContractConfig.ts";
 import {useCallback, useEffect, useMemo} from "react";
 import {MaxUint256} from '@ethersproject/constants'
 import {useAccount, useReadContract, useTransaction, useWriteContract} from "wagmi"

@@ -1,7 +1,6 @@
 
 import { useCallback } from 'react'
-import {useUnitrollerContract, useUnitrollerContractConfig} from "./useContract";
-import useActiveWeb3React from "./useActiveWeb3React";
+import { useUnitrollerContractConfig} from "./useContractConfig.ts";
 import {useAccount, useWriteContract} from "wagmi";
 
 export default function useUnitroller() {

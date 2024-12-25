@@ -1,17 +1,15 @@
 import {useEffect, useState} from "react";
 import {ChainId} from "../constants/chains.ts";
-import {JsonRpcProvider} from "@ethersproject/providers";
-import {RPC} from "../connectors";
 import {useAccount, useChainId} from "wagmi";
 import {useEthersProvider} from "./useSignerOrProvider.ts";
 
 export function useSeiAddress() {
-    const chainId = useChainId()
+    // const chainId = useChainId()
     const {address} = useAccount()
-    const [seiAddress, setSeiAddress] = useState(undefined)
-    const [loading, setLoading] = useState(true)
-    const provider = useEthersProvider()
-
+    // const [seiAddress, setSeiAddress] = useState(undefined)
+    // const [loading, setLoading] = useState(true)
+    // const provider = useEthersProvider()
+    //
     // useEffect(() => {
     //     // todo check testnet
     //     setLoading(true)
@@ -35,6 +33,6 @@ export function useSeiAddress() {
     //             })
     //     }
     // }, [chainId, address])
-
+    //
     return {seiAddress: address, loading: false}
 }
