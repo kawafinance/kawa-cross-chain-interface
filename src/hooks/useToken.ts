@@ -1,8 +1,7 @@
 import {useTokenContract, useTokenContractConfig} from "./useContract";
 import {useCallback, useEffect, useMemo} from "react";
 import {MaxUint256} from '@ethersproject/constants'
-import {useAccount, useReadContract, useTransaction, useWriteContract} from "wagmi";
-import useTransactionStatus from "./useTransactionStatus.ts";
+import {useAccount, useReadContract, useTransaction, useWriteContract} from "wagmi"
 
 export function useToken(token?: string, spender?: string, amountToCheck?: string) {
     const {address} = useAccount()

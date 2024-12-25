@@ -1,18 +1,12 @@
 import React, {useState} from "react";
-import {formatNumber, formatRawAmount} from "../utils/convert";
-// import Web3Status from "./Web3Status";
 import {useSeiAddress} from "../hooks/useSeiAddress.ts";
 import {Navigation} from "./Navigation";
 import {Bars3Icon} from '@heroicons/react/24/solid'
 import useIsMobile from "../hooks/useIsMobile";
-import {useAccount, useChainId} from "wagmi";
 import ConnectWalletButton from "./ConnectWalletButton";
 
 export const Header = () => {
-    const chainId = useChainId()
-    const account = useAccount()
     // const {seiAddress, loading} = useSeiAddress()
-    // const seiBalance = useSEIBalance()
     const isMobile = useIsMobile()
     const [isOpen, setIsOpen] = useState(false);
 
@@ -40,12 +34,6 @@ export const Header = () => {
                             )}
                         </div>
                         <ConnectWalletButton />
-                        {/*<Web3Status />*/}
-                        {/*{account && seiAddress && !loading && (*/}
-                        {/*    <div className='text-base font-medium text-center pr-4 py-2'>*/}
-                        {/*        {formatNumber(formatRawAmount(seiBalance, 18))} SEI*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
                     </div>
             </div>
         ) : (
@@ -54,12 +42,6 @@ export const Header = () => {
                 <div className='flex items-center space-x-2'>
                     <div className="flex flex-row rounded bg-neutral-800">
                         <ConnectWalletButton />
-                        {/*<Web3Status />*/}
-                        {/*{account  && ((chainId === ChainId.MAINNET && seiAddress && !loading) || chainId === ChainId.DEVNET) && (*/}
-                        {/*    <div className='text-base font-medium text-center pr-4 py-2'>*/}
-                        {/*        {formatNumber(formatRawAmount(seiBalance, 18))} SEI*/}
-                        {/*    </div>*/}
-                        {/*)}*/}
                     </div>
                 </div>
             </div>
