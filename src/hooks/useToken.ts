@@ -1,7 +1,5 @@
 import {useTokenContract, useTokenContractConfig} from "./useContract";
 import {useCallback, useEffect, useMemo} from "react";
-import {useSingleCallResult} from "../state/multicall/hooks";
-import {BigNumber} from "bignumber.js";
 import {MaxUint256} from '@ethersproject/constants'
 import {useAccount, useReadContract, useTransaction, useWriteContract} from "wagmi";
 import useTransactionStatus from "./useTransactionStatus.ts";

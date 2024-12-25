@@ -6,7 +6,8 @@ type AssetInfo = {
     symbol: string
     decimals: number
     chainId: ChainId,
-    client: string
+    client: string,
+    buyUrl: string
 }
 
 // export type AddressMapForLend = {
@@ -22,7 +23,8 @@ export const MARKETS: AssetInfo[] = [
         symbol: 'kSEI',
         decimals: 8,
         chainId: ChainId.DEVNET,
-        client: ''
+        client: '',
+        buyUrl: 'https://sei-evm.faucetme.pro/'
     },
     {
         id: '0x38C4Fe1f9c265be237104eb7Fbe5CdE08b004844',
@@ -30,7 +32,8 @@ export const MARKETS: AssetInfo[] = [
         symbol: 'kETH',
         decimals: 8,
         chainId: ChainId.SEPOLIA,
-        client: '0x2515eF84170495D8dA03071a181E8aFd6D3cA4b5'
+        client: '0x2515eF84170495D8dA03071a181E8aFd6D3cA4b5',
+        buyUrl: 'https://sepolia-faucet.pk910.de/#/'
     },
     {
         id: '0xee26d43c14A3195E7d3a222e8489914b06202924',
@@ -38,7 +41,8 @@ export const MARKETS: AssetInfo[] = [
         symbol: 'kBNB',
         decimals: 8,
         chainId: ChainId.BSC_TESTNET,
-        client: '0xD6a1489a092570B57B02EdA744c37510553f212c'
+        client: '0xD6a1489a092570B57B02EdA744c37510553f212c',
+        buyUrl: 'https://www.bnbchain.org/en/testnet-faucet'
     }
 ]
 

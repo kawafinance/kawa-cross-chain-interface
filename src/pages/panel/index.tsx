@@ -9,7 +9,7 @@ import RangeSlider from "../../components/RangeSlider";
 import FutureBalance from "../../components/FutureBalance";
 import TransactionModal, {TRANSACTION_STATE} from "../../components/TransactionModal";
 import useMarketContract from "../../hooks/useMarketContract.ts";
-import {useSEIBalance, useTokenBalance} from "../../hooks/useBalance";
+import {useTokenBalance} from "../../hooks/useTokenBalance.ts";
 import {MARKETS, NATIVE_CHAIN_ID} from "../../constants/contracts.ts";
 import {MaxUint256} from '@ethersproject/constants'
 import {BigNumber} from "bignumber.js";
@@ -78,7 +78,11 @@ export default function Panel(): JSX.Element {
         isClient
     )
 
-    // const {needsApprove, approve, hash: approveHash, error: approveError, isPending: approveIsPending } = useToken(farm?.underlying, farm?.id, amountRaw)
+    useEffect(() => {
+        if (!address){
+            navigate('/lend')
+        }
+    }, [address])
 
     const max = useMemo(() => {
         const isNative = true//farm?.id == MARKETS.find(r => r.symbol == 'kSEI')?.id

@@ -1,7 +1,6 @@
 import React, {useState} from "react";
 import {formatNumber, formatRawAmount} from "../utils/convert";
 // import Web3Status from "./Web3Status";
-import {useSEIBalance} from "../hooks/useBalance";
 import {useSeiAddress} from "../hooks/useSeiAddress.ts";
 import {Navigation} from "./Navigation";
 import {Bars3Icon} from '@heroicons/react/24/solid'

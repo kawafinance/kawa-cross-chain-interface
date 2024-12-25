@@ -133,24 +133,14 @@ const ListItemDetails = ({type, farm}) => {
             <div className='flex justify-center space-x-4 text-[14px]'>
                 {type === TYPES.DEPOSIT ?
                     (<>
-                            {/*<Button*/}
-                            {/*    className={'h-[40px] w-[112px] rounded'}*/}
-                            {/*    variant={BUTTON_VARIANTS.FILLED}*/}
-                            {/*    disabled={false}*/}
-                            {/*    onClick={() => window.open(*/}
-                            {/*        chainId === ChainId.MAINNET*/}
-                            {/*            ? 'https://dragonswap.app/swap'*/}
-                            {/*            : farm?.symbol === 'kSEI'*/}
-                            {/*                ? chainId === ChainId.TESTNET*/}
-                            {/*                    ? 'https://atlantic-2.app.sei.io/faucet'*/}
-                            {/*                    : 'https://sei-evm.faucetme.pro/'*/}
-                            {/*                : chainId === ChainId.TESTNET*/}
-                            {/*                    ? ''*/}
-                            {/*                    : 'https://test.dragonswap.app/swap'*/}
-                            {/*        , '_blank')}*/}
-                            {/*>*/}
-                            {/*    Buy*/}
-                            {/*</Button>*/}
+                            <Button
+                                className={'h-[40px] w-[112px] rounded'}
+                                variant={BUTTON_VARIANTS.FILLED}
+                                disabled={false}
+                                onClick={() => window.open(farm?.buyUrl, '_blank')}
+                            >
+                                Buy
+                            </Button>
 
                             <Button
                                 className={'h-[40px] w-[112px] rounded'}
